@@ -39,19 +39,17 @@ class Row:
         if self.__content[0] is None:
             return ""
 
-        text = "("
-        for col in self.__content:
-            text += col
-            text += ", "
+        # text = "("
+        #
+        # for col in self.__content:
+        #     text += col
+        #     text += ", "
+        # if len(text) > 1:
+        #     text = text[:len(text) - 2]
+        #
+        # text += ")"
 
-        # TODO 消除多余的空格和逗号
-        # (134968160, 367889, 629075801, wkI370624731, 还行吧，一般的电影…, 4, 0, 0, 2018-01-07 16:52:53, )
-        if len(text) > 1:
-            text = text[:len(text) - 2]
-
-        text += ")"
-
-        return text
+        return '(' + ','.join(self.__content) + ')'
 
 
 
