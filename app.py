@@ -36,8 +36,8 @@ if __name__ == '__main__':
     csv_util.write(Row((1, 2, 3, '土豆2号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S'))))
 
     print("###################多行写入#######################")
-    rows = [Row((1, 2, 3, '土豆3号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S'))).get_content(),
-            Row((1, 2, 3, '土豆4号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S'))).get_content()]
+    rows = [Row((1, 2, 3, '土豆3号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S'))),
+            Row((1, 2, 3, '土豆4号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S')))]
     csv_util.write_all(rows)
 
     csv_util.close()

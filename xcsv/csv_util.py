@@ -1,8 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 import os
+
+from xcsv.csv_not_open_exception import CSVNotOpenException
 from xcsv.header import Header
 from xcsv.row import Row
+
+
+def check_csv_exist(f):
+    """
+    判断文件是否存在的装饰器
+    """
+    def inner(self, *args, **kwargs):
+        if self.get_csv_file() is None:
+            raise CSVNotOpenException("'{}' is not open.".format(self.get_tmp_filename()))
+        return f(self, *args, **kwargs)
+    return inner
 
 
 class CSVUtil:
@@ -12,12 +25,32 @@ class CSVUtil:
 
     __csv_file = None
     __cached_header = None
+    __tmp_filename = None
 
+    def get_csv_file(self):
+        return self.__csv_file
+
+    def get_tmp_filename(self):
+        return self.__tmp_filename
+
+    # def check_csv_exist(csv_file):
+    #     def decorator(func):
+    #         # @wraps(func)
+    #         def inner(*args):
+    #             if csv_file is None:
+    #                 raise CSVNotOpenException("'{}' is not open.".format("1"))
+    #             return func(*args)
+    #         return inner
+    #     return decorator
+
+    @check_csv_exist
     def read(self) -> Row:
         """
         读取 CSV 数据并返回为 Python 对象, 每调用一次，就会读取一行新的数据
         :return: Row
         """
+        # self.__check_csv_open()
+
         # 如果读的是表头，就让指针往下移一行
         if self.__csv_file.tell() == 0:
             self.__csv_file.readline()
@@ -27,6 +60,7 @@ class CSVUtil:
 
         return Row(row=line_object)
 
+    @check_csv_exist
     def write(self, row: Row) -> None:
         # TODO 实现写入一行 CSV 数据追加到文件中
         # 文件指针移到末尾
@@ -35,10 +69,12 @@ class CSVUtil:
         # writer.writerow(row.get_content())
         self.__csv_file.write(row.get_content())
 
+    @check_csv_exist
     def write_all(self, rows: list) -> None:
         # 文件指针移到末尾
         self.__csv_file.seek(0, 2)
-        self.__csv_file.writelines(rows)
+        for row in rows:
+            self.__csv_file.writelines(row.get_content())
 
     def open(self, filename: str = None) -> None:
         """
@@ -54,6 +90,10 @@ class CSVUtil:
             self.__csv_file = open(filename, 'r+', encoding="UTF-8", newline='')
             # self.__csv_file = self.__csv_file.replace("\r\n", "")
 
+        self.__tmp_filename = filename
+
+        # TODO 判断__csv_file
+
     def close(self) -> None:
         """
         关闭 CSV 文件
@@ -62,6 +102,7 @@ class CSVUtil:
         if not self.__csv_file.closed:
             self.__csv_file.close()
 
+    @check_csv_exist
     def read_header(self, cache: bool = False) -> Header:
         """
         读取 CSV 文件头部
@@ -96,6 +137,7 @@ class CSVUtil:
 
         return header
 
+    @check_csv_exist
     def read_all(self) -> list:
         # TODO 实现将 CSV 文件中的全部数据打包成一个 Row 类型的 list
         lists: list[Row] = []
@@ -106,6 +148,7 @@ class CSVUtil:
             lists.append(Row(row=line_object))
         return lists
 
+    @check_csv_exist
     def __parse_csv_string_line(self, line: str) -> tuple:
         """
         将 CSV 字符串解析为 Python 对象， 将字符串转列表再转元组
@@ -129,6 +172,7 @@ class CSVUtil:
 
         return tuple(tmp)
 
+    @check_csv_exist
     def row_generator(self) -> Row:
         """
         Row 生成器，每次迭代，可以返回一个 Row 对象
