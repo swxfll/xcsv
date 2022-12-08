@@ -50,8 +50,8 @@ csv_util.write(Row((1, 2, 3, '土豆1号', '电影评价', 4, 5, 6, time.strftim
 csv_util.write(Row((1, 2, 3, '土豆2号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S'))))
 
 # OR
-rows = [Row((1, 2, 3, '土豆3号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S'))).get_content(),
-        Row((1, 2, 3, '土豆4号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S'))).get_content()]
+rows = [Row((1, 2, 3, '土豆3号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S'))),
+        Row((1, 2, 3, '土豆4号', '电影评价', 4, 5, 6, time.strftime('%Y-%m-%d %H:%M:%S')))]
 csv_util.write_all(rows)
 ```
 
